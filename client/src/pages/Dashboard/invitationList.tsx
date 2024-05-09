@@ -15,6 +15,7 @@ const InvitationList: React.FC = () => {
                     },
                 });
                 setInvitations(response.data);
+                console.error(response.data);
             } catch (error: any) {
                 console.error('Error fetching invitations:', error);
             }
@@ -61,7 +62,9 @@ const InvitationList: React.FC = () => {
             <ul>
                 {invitations.map((invitation: any) => (
                     <li key={invitation._id}>
-                        From: {invitation.sender}
+                        From: {invitation.recipientUsername}
+                        <br />
+                        Board: {invitation.board.name}
                         <button onClick={() => handleAcceptInvitation(invitation._id)}>Accept</button>
                         <button onClick={() => handleRejectInvitation(invitation._id)}>Reject</button>
                     </li>

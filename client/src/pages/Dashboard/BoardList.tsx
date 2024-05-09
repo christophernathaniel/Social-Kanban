@@ -3,10 +3,12 @@ import axios from 'axios';
 import DefaultLayout from '../../layout/DefaultLayout';
 import InvitationForm from './invitationForm';
 import InvitationList from './invitationList';
+import { useUser } from '../../contexts/UserContext.tsx';
 
 const BoardList = () => {
     const [boards, setBoards] = useState([]);
     const [newBoardName, setNewBoardName] = useState('');
+    const { user } = useUser();
 
     // Function to fetch all boards for the user
     const fetchBoards = async () => {
@@ -59,6 +61,22 @@ const BoardList = () => {
         }
     };
 
+    // Function to handle removing a member to a board
+    const handleRemoveMember = async (board, userId) => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`http://localhost:5001/api/boards/${board._id}/members/${userId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            // Optionally, update the board state or UI after member removal
+        } catch (error) {
+            console.error('Error removing member from board:', error);
+            // Handle error
+        }
+    };
+
 
     return (
         <DefaultLayout>
@@ -69,12 +87,17 @@ const BoardList = () => {
                 {boards.map((board) => (
                     <li key={board._id}>
                         <h3>{board.name}</h3>
-                        {board.members.length > 0 ?? (
+                        {board.members.length > 0 && (
                             <>
                                 <p>Members:</p>
                                 <ul>
                                     {board.members.map((member) => (
-                                        <li key={member._id}>{member.name} - {member.username}</li>
+                                        <li key={member._id}>
+                                            {member.name} - {member.username}
+                                            {member._id === user._id && (
+                                                <button className="removeSelf" onClick={() => handleRemoveMember(board, member._id)}>Remove</button>
+                                            )}
+                                        </li>
                                     ))}
                                 </ul>
                             </>
