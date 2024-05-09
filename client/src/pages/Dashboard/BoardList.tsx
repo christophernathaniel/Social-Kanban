@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import DefaultLayout from '../../layout/DefaultLayout';
+import InvitationForm from './invitationForm';
+import InvitationList from './invitationList';
 
 const BoardList = () => {
     const [boards, setBoards] = useState([]);
@@ -15,6 +18,7 @@ const BoardList = () => {
                 }
             });
             setBoards(response.data);
+            console.error(response.data);
         } catch (error) {
             console.error('Error fetching boards:', error);
         }
@@ -40,14 +44,13 @@ const BoardList = () => {
         }
     };
 
-    // Function to handle board deletion
     const handleDeleteBoard = async (boardId) => {
         try {
-            const token = localStorage.getItem('token'); // Retrieve token from localStorage
+            const token = localStorage.getItem('token');
             await axios.delete(`http://localhost:5001/api/boards/${boardId}`, {
                 headers: {
-                    Authorization: `Bearer ${token}` // Set Authorization header with token
-                }
+                    Authorization: `Bearer ${token}`,
+                },
             });
             const updatedBoards = boards.filter((board) => board._id !== boardId);
             setBoards(updatedBoards);
@@ -56,15 +59,28 @@ const BoardList = () => {
         }
     };
 
+
     return (
-        <div>
+        <DefaultLayout>
             <h1>Kanban Boards</h1>
+            <InvitationList />
             {/* Board list */}
             <ul>
                 {boards.map((board) => (
                     <li key={board._id}>
-                        {board.name}
+                        <h3>{board.name}</h3>
+                        {board.members.length > 0 ?? (
+                            <>
+                                <p>Members:</p>
+                                <ul>
+                                    {board.members.map((member) => (
+                                        <li key={member._id}>{member.name} - {member.username}</li>
+                                    ))}
+                                </ul>
+                            </>
+                        )}
                         <button onClick={() => handleDeleteBoard(board._id)}>Delete</button>
+                        <InvitationForm boardId={board._id} />
                     </li>
                 ))}
             </ul>
@@ -78,7 +94,7 @@ const BoardList = () => {
                 />
                 <button onClick={handleCreateBoard}>Create Board</button>
             </div>
-        </div>
+        </DefaultLayout>
     );
 };
 

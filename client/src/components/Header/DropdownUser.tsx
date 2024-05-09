@@ -73,6 +73,7 @@ const DropdownUser = () => {
             {user && (user.name)}
           </span>
           <span className="block text-xs"> {user && (user.profileRole)}</span>
+          <span className="block text-xs"> {user && (user.username)}</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
