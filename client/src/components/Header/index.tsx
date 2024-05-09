@@ -4,36 +4,14 @@ import DropdownNotification from './DropdownNotification';
 import DropdownUser from './DropdownUser';
 import LogoIcon from '../../images/logo/logo-icon.svg';
 import DarkModeSwitcher from './DarkModeSwitcher';
-import { useAuth } from '../../contexts/AuthContext.tsx'
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import api from '../../api';
+import { useUser } from '../../contexts/UserContext.tsx';
 
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
 }) => {
 
-  const { isLoggedIn } = useAuth();
-
-  const [user, setUser] = useState<any>(null);
-  const [error, setError] = useState<any>(null);
-
-  useEffect(() => {
-    api.get('/users/profile',
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      })
-      .then(response => {
-        setUser(response.data);
-        console.error(response.data);
-      })
-      .catch(error => {
-        setError(error.message);
-      });
-  }, []);
+  const { user } = useUser();
 
   return (
     <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">

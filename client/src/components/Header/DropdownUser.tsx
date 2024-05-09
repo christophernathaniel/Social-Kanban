@@ -1,17 +1,25 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import UserOne from '../../images/user/user-01.png';
 import { useAuth } from '../../contexts/AuthContext.tsx'
 import { googleLogout } from '@react-oauth/google';
+import { useUser } from '../../contexts/UserContext.tsx';
+
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { logout } = useAuth()
   const navigate = useNavigate()
 
+
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
+
+  const { user } = useUser();
+
+  console.error(user);
+
+
 
   // close on click outside
   useEffect(() => {
@@ -62,13 +70,13 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Thomas Anree
+            {user && (user.name)}
           </span>
-          <span className="block text-xs">UX Designer</span>
+          <span className="block text-xs"> {user && (user.profileRole)}</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
-          <img src={UserOne} alt="User" />
+          <img src={user && user.profilePicture} alt="User" />
         </span>
 
         <svg
